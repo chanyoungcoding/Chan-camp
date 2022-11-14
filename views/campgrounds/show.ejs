@@ -1,12 +1,31 @@
 <% layout('layouts/boilerplate')%> 
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="card mb-5" style="width: 30rem;">
 
-    <h1>Campground details</h1>
-    <h2><%= campground.title %></h2>
-    <img src="<%= campground.image %>" alt="#">
-    <h2><%= campground.descriptiom %> </h2>
-    <h3><%= campground.location %> </h3>
-    <a href="/campgrounds/<%= campground._id%>/edit">Edit Campground</a><br>
-    <a href="/campgrounds">Back Campground Site</a>
-    <form action="/campgrounds/<%= campground._id%>?_method=DELETE" method="POST">
-        <button>Delete</button>
-    </form>
+            <!-- 이미지 -->
+            <img src="<%= campground.image %>" class="card-img-top" alt="#">
+
+            <!-- 제목,설명 -->
+            <div class="card-body">
+                <h5 class="card-title"><%= campground.title %></h5>
+                <p class="card-text"><%= campground.description %></p>
+            </div>
+
+            <!-- 장소,가격 -->
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-muted"><%= campground.location %></li>
+                <li class="list-group-item">$<%= campground.price %></li>
+            </ul>
+            
+            <!-- 버튼 -->
+            <div class="card-body">
+                <a class="card-link btn btn-primary" href="/campgrounds/<%= campground._id%>/edit">Edit Campground</a>
+                <form class="d-inline" action="/campgrounds/<%= campground._id%>?_method=DELETE" method="POST">
+                    <button class="btn btn-success">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
