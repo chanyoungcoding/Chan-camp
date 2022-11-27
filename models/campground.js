@@ -1,29 +1,35 @@
 const mongoose = require('mongoose');
+const Review = require('./review')
 const Schema = mongoose.Schema;
 
 const CampgroundSchema = new Schema({
     title: String,
+    images: [
+        {
+            url: String,
+            filename: String
+        }
+    ],
     price: Number,
-    image: String,
     description: String,
     location: String,
     author: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
+            type: Schema.Types.ObjectId,
+            ref:'User'
     },
-    reviews:[
+    reviews: [
         {
             type: Schema.Types.ObjectId,
-            ref:'Review'
+            ref:"Review"
         }
     ]
 });
 
-CampgroundSchema.post('findOneAndDelete', async function(doc) {
-    if(doc) {
+CampgroundSchema.post('findOneAndDelete', async function(dec) {
+    if(dec){
         await Review.deleteMany({
             _id: {
-                $in: doc.reviews
+                $in: dec.reviews
             }
         })
     }

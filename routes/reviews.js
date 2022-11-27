@@ -1,26 +1,35 @@
 const express = require('express');
-const router = express.Router({mergeParams: true});
-const catchAsync = require('../utils/catchAsync')
-const { validateReview, isLoggedIn, isReviewAuthor } = require('../middleware')
-
-const Campground = require('../models/campground')
+const router = express.Router({mergeParams : true }) 
 const Review = require('../models/review')
+const catchAsync = require('../utils/catchAsync')
+const ExpressError = require('../utils/ExpressError')
+const Campground = require('../models/campground')
+const reviews = require('../controllers/reviews')
+const { reviewSchema } = require('../schemas.js')
+const isLoggedIn = require('../middleware')
 
-router.post('/', isLoggedIn ,validateReview ,catchAsync(async(req,res) => {
-    const campground = await Campground.findById(req.params.id)
-    const review = new Review(req.body.review)
-    review.author = req.user._id
-    campground.reviews.push(review)
-    await review.save()
-    await campground.save()
-    res.redirect(`/campgrounds/${campground._id}`)
-}))
+const validateReview = (req,res,next) => {
+    const {error} = reviewSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map((el)=> el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next()
+    }
+}
 
-router.delete('/:reviewId', isLoggedIn, isReviewAuthor ,catchAsync(async(req,res) => {
+const isReviewAuthor = async(req,res,next) => {
     const { id, reviewId } = req.params;
-    await Campground.findByIdAndUpdate(id, { $pull:{reviews: reviewId}})
-    await Review.findByIdAndDelete(reviewId)
-    res.redirect(`/campgrounds/${id}`)
-}))
+    const review = await Review.findById(reviewId);
+    if(!review.author.equals(req.user._id)) {
+        req.flash('error', '사용자 권한이 없습니다.')
+        return res.redirect(`/campgrounds/${id}`)
+    }
+    next()
+}
 
-module.exports = router;
+router.post('/', isLoggedIn ,validateReview ,catchAsync(reviews.createReview))
+
+router.delete('/:reviewId', isLoggedIn, isReviewAuthor ,catchAsync(reviews.destroyReview))
+
+module.exports = router
