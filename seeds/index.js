@@ -29,6 +29,11 @@ const seedDB = async () => {
             image: `https://source.unsplash.com/collection/483251`,
             description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Numquam eum tempore corporis debitis soluta laborum est consequatur ullam molestias dicta!',
             price,
+            geometry:
+            {
+                type: 'Point',
+                coordinates: [-122.330062, 47.603832]
+            },
             images: [
                 {
                     url:'https://res.cloudinary.com/dnjjlp2uy/image/upload/v1667972771/ChanCamp/jux03a6wtwebuibrrerq.png',
