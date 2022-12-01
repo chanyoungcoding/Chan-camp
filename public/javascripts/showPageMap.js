@@ -1,11 +1,13 @@
 
 mapboxgl.accessToken = 'pk.eyJ1IjoicGFya2NoYW55b3VuZyIsImEiOiJjbGIwOTQ3MGkwNGg1M29rOG16MDRjeXIwIn0.sbwLZwL_-ZCFaGhExiwEaA';
 const map = new mapboxgl.Map({
-container: 'map', // container ID
-style: 'mapbox://styles/mapbox/light-v10', // style URL
-center:campground.geometry.coordinates, // starting position [lng, lat]
-zoom: 9, // starting zoom
+container: 'map', 
+style: 'mapbox://styles/mapbox/light-v10', 
+center:campground.geometry.coordinates, 
+zoom: 10, 
 });
+
+map.addControl(new mapboxgl.NavigationControl());
 
 new mapboxgl.Marker()
     .setLngLat(campground.geometry.coordinates)

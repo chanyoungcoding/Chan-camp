@@ -1,10 +1,12 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoicGFya2NoYW55b3VuZyIsImEiOiJjbGIwOTQ3MGkwNGg1M29rOG16MDRjeXIwIn0.sbwLZwL_-ZCFaGhExiwEaA';
 const map = new mapboxgl.Map({
-    container: 'map',
+    container: 'cluster-map',
     style: 'mapbox://styles/mapbox/light-v11',
     center: [-103.5917, 40.6699],
     zoom: 3
 });
+
+map.addControl(new mapboxgl.NavigationControl());
 
 map.on('load', () => {
 
@@ -88,10 +90,8 @@ map.on('load', () => {
     });
 
     map.on('click', 'unclustered-point', (e) => {
+        const { popUpMarkup } = e.features[0].properties
         const coordinates = e.features[0].geometry.coordinates.slice();
-        const mag = e.features[0].properties.mag;
-        const tsunami =
-            e.features[0].properties.tsunami === 1 ? 'yes' : 'no';
 
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
@@ -99,9 +99,7 @@ map.on('load', () => {
 
         new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setHTML(
-                `magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`
-            )
+            .setHTML(popUpMarkup)
             .addTo(map);
     });
 
